@@ -1,0 +1,44 @@
+﻿git의 명령어를 정리.
+
+## 로컬 파일을 원격 브랜치의 코드로 덮어쓰기.
+
+$ git fetch origin
+$ git reset --hard origin/(브랜치명)
+
+## 모든 브랜치 목록
+
+$ git branch -a
+
+## 모든 원격브랜치 목록
+
+$ git branch -r
+
+## 원격 브랜치 확인
+
+$ git remote -v
+
+## 원격 저장소 스냅샷 가져오기
+
+$ git fetch
+
+## 원격 저장소로 체크아웃 (로컬에 해당 브랜치가 이미 있는 경우)
+
+$ git checkout origin/(브랜치이름)
+
+## 원격 저장소로 체크아웃 (로컬에 해당 브랜치가 아직 없는 경우)
+
+$ git checkout -t origin/(브랜치이름)
+
+## 원격 저장소 등록
+
+$ git remote add origin {URL}
+
+## 원격 저장소 제거
+
+$ git remote remove origin
+# 원격 변경은 저장소를 제거 후 등록. 단, 로컬의 브렌치들도 업스트림을 다시 설정해줘야한다
+
+## 브렌치 업스트림 설정
+
+#해당 브렌치에서
+$ git branch --set-upstream-to=origin/{브렌치명}
