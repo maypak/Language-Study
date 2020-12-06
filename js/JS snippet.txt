@@ -1,3 +1,29 @@
+### Arrow function
+# 콜백용 함수, 일회성 함수 등 함수의 이름이 필요 없는 경우, 간편하게
+# function () {} 를 () =>{} 으로 축약가능.
+# 사용예시. 
+# 1. Arrow 미적용.
+let newArr = [1,2,3].map(function(value, index, object) {
+  return value * 2;
+})
+
+console.log(newArr) // [2,4,6]
+
+# 2. Arrow 적용
+let newArr = [1,2,3].map((v)=> {
+  return v * 2;
+})
+
+console.log(newArr) // [2,4,6]
+
+# 3. return 생략
+let newArr = [1,2,3].map( (v) => v*2 ); // {}가 없을경우 => 뒤의 값을 그대로 리턴함.
+let newArr = [1,2,3].map( (v) => (v*2) ); // ()을 리턴으로 활용할수도 있음
+
+console.log(newArr) // [2,4,6]
+
+
+
 ## 배열 내 모든 값에 대하여 function을 실행시킨 return값들으로 구성된 배열을 리턴
 let allNum = array.map(x => {return x + 1});
 ## 배열 내 모든 값에 대하여 true인 값만으로 배열을 새로 구성해 반환. ## array.reject는 array.filter와 정확하게 동작. 이것은 내장메소드가 아니라서 lodash등을 사용해야함.
@@ -11,7 +37,6 @@ let sm = array.some(x => {return x==0});
 ## every와 some은 반환값이 결정되면 순회 중지.
 
 ###Map오브젝트 ## K-V store, java beans와 비슷
-
 let me = new Map();
 me.set('name', 'May');
 me.set('age', 30);
@@ -40,8 +65,32 @@ console.log(me.has('age')); // false
 you.clear();
 console.log(you.size); // 0
 
+###WeakMap오브젝트
+let wm = new WeakMap();
+let myfun = function(){};
+// 이 함수가 얼마나 실행되었는지를 알려고 할 때,
+wm.set(myfun, 0);
+console.log(wm); // function => 0
+
+let count = 0;
+for (let i = 0; i <10; i++) {
+	count = wm.get(myfun);
+	count++;
+	wm.set(myfun, count);
+}
+
+console.log(wm); // function => 10
+console.log(wm.get(myfun)); // 10
+console.log(wm.has(myfun)); // true
+
+myfun = null;
+console.log(wm.get(myfun)); // 0
+console.log(wm.has(myfun)); // false
+
+
+
 ###Set 오브젝트
-// 비어있는 새로운 set 을 만듬
+// 비어있는 새로운 set 을 만듦
 let setA = new Set();
 // 새로운 set 을 만들고 인자로 전달된 iterable 로 인자를 채움
 let setB = new Set().add('a').add('b');
@@ -58,9 +107,43 @@ setB.clear();
 console.log(setB.size); // 0
 
 
+###WeakSet 오브젝트
+// 참조를 가지고 있는 오브젝트만 저장이 가능
+// 비어있는 새로운 WeakSet을 만듦.
+let ws = new WeakSet();
+// WeakSet에서 가능한 것
+let arr = [1,2,3];
+let arr2 = ["4","5"];
+let obj = {arr, arr2};
+ws.add(arr);
+ws.add(arr2);
+ws.add(obj);
+ws.add(function(){});
+console.log(ws); // {/* arr */ [1,2,3], /* arr2 */ ["4","5"], /* obj */ {[1,2,3], ["4","5"]}}
+// 아래 예시들은 참조가 아니기 때문에 WeakSet에서 추가하려고하면 오류가 난다.
+ws.add(123); //Error
+ws.add("abc"); //Error
+ws.add(null); //Error
+// 변수명을 key로 찾기 가능
+ws.has(arr); //True
+// gc 대상이 되는 경우엔 보관하지 않음
+arr = null;
+console.log(ws); // {/* arr */ [1,2,3], /* arr2 */ ["4","5"], /* obj */ {[1,2,3], ["4","5"]}}
+ws.has(arr); // False 
+
+
 spread연산자
 // string == iterable object
 console.log([...'music']); // ['m', 'u', 's', 'i', 'c']
+// array를 풀어버린다.
+let arr = [1,2,3];
+let nextArr = [];
+nextArr = [...arr]; 
+console.log(nextArr); // [1,2,3] 으로 풀어서 넣었음.
+function sum (let a, let b, let c) {
+	return a + b + c;
+}
+sum(...arr); // == sum(1,2,3);
 
 
 let me = new Map().set('a', 1).set('b', 2);
@@ -76,3 +159,28 @@ let iterObj = you.entries();
 console.log(iterObj.next()); // {value: ['Seoul', 28], done: false}
 console.log(iterObj.next()); // {value: ['Tokyo', 26], done: false}
 console.log(iterObj.next()); // {value: undefined, done: true}
+
+
+### 디스트럭쳐링을 활용한 로또번호 생성기 코드
+
+const SETTING = {
+	name: "LUCKY LOTTO!",
+	count: 6,
+	maxNumber: 45
+}
+
+// maxNumber를 뽑는 디스트럭처링을 패러미터에 활용
+function getRandomNumber ({maxNumber}) {
+  let min = Math.ceil(1);
+  let max = Math.floor(maxNumber);
+
+  return Math.floor(Math.random() * (maxNumber - 1) + 1);
+}
+
+let nums = new Set();
+
+while(nums.size <= 6) {
+  nums.add(getRandomNumber(SETTING));
+}
+
+console.log(nums);
